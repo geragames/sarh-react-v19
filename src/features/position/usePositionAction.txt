@@ -1,0 +1,99 @@
+import { AppDispatch } from "..";
+//import { apiRequest } from "../../api/api.services";
+import { getAxiosWithAuth } from "../../hooks/useAxiosWithAuth";
+
+import { PositionRequest } from "../../models/position";
+import {
+  fetchStart,
+  fetchSuccess,
+  setPosition,
+  setPositions,
+  adddNewPosition,
+} from "./positionSlice";
+
+export const usePositionAction = () => {
+  const axiosWithAuth = getAxiosWithAuth();
+
+  
+  //const { jwt : token} = JSON.parse(window.localStorage.getItem('user_access_token') || '{}');
+
+  const fetchPositions = () => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(fetchStart());
+
+      const res = await axiosWithAuth.get("position/all");
+      console.log("RESPONSE 22222 ", res.data);
+      
+      dispatch(setPositions(res.data));
+      dispatch(fetchSuccess(res.data));
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+    }
+  };
+
+  const fetchVacantPositions = () => async( dispatch: AppDispatch) => { 
+     try {
+      dispatch(fetchStart());
+        const res = await axiosWithAuth.get("position/vacant");
+        dispatch(setPosition(res.data));
+        dispatch(fetchSuccess(res.data)); 
+     } catch (error) {
+      if(error instanceof Error){
+        throw new Error(error.message);
+      }
+     } 
+  }
+
+  const fetchAvailablePositions = () => async (dispatch: AppDispatch) => {
+    try {
+      dispatch(fetchStart());
+
+      const res = await axiosWithAuth.get("position/available");
+      //console.log("RESPONSE 22222 ", res.data);
+      
+      dispatch(setPositions(res.data));
+      dispatch(fetchSuccess(res.data));
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+    }
+  };
+
+  const fetchPositionById = (id: number) => {
+    return async (dispatch: AppDispatch) => {
+      try {
+        //const response = await apiRequest(`position/${id}`, "GET");
+        const response = await axiosWithAuth.get(`position/${id}`);
+        dispatch(setPosition(response));
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+      }
+    };
+  };
+
+  const addPosition = (position: PositionRequest) => {
+    return async (dispatch: AppDispatch) => {
+      try {
+        const response = await axiosWithAuth.post("position/create", position); //apiRequest("position/create", "POST", position);
+      
+        const {data } = response; 
+        console.log("RESPONSE DATA ", data);
+        const { id, organizationalUnitID: { nameUnit }, pointsAvailable } = data;
+        console.log("RESPONSE ", id, nameUnit , pointsAvailable);
+        
+        dispatch(adddNewPosition(data));
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+      }
+    };
+  };
+
+  return { fetchPositions, fetchVacantPositions ,fetchAvailablePositions, addPosition, fetchPositionById };
+};

@@ -1,0 +1,43 @@
+
+import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import { useEffect } from "react";
+import { searchPlantReport } from "../../features/plant-report/plantReportThunk";
+import { PlantFilter } from "../../models/plantFilter";
+//import { loadPending, loadSuccess } from "../../features/plant-report/plantReportSlice";
+
+export const PlantReport = () => {
+
+    const dispatch = useAppDispatch();
+    const { data, loading, error } = useAppSelector(
+        (state) => state.plantReport
+    );
+
+    useEffect(() => {
+        const filter: PlantFilter = {
+            subject: "",
+            department: "",
+            teacher: "",
+            namePosition: ""
+        }
+        dispatch(searchPlantReport(filter));
+    }, [dispatch])
+
+    if (loading) return <p>Cargando...</p>;
+    if (error) return <p className="text-red-500">{error}</p>;
+
+    return (
+        <div>
+            <h2 className="font-bold text-lg mb-2">Reporte de Planta</h2>
+            {data.length === 0 ? (
+                <p>No se encontraron resultados</p>
+            ) : (
+                <ul className="list-disc pl-4">
+                    {data.map((plant) => (
+                        <li key={plant.id}>{plant.lastname} {plant.firstname} {plant.nameSubUnit} {plant.namePosition}</li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}
+

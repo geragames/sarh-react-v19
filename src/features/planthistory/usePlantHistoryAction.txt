@@ -1,0 +1,42 @@
+
+import { AppDispatch } from "..";
+import { getAxiosWithAuth } from "../../hooks/useAxiosWithAuth";
+
+export const usePlantHistoryAction = () => {
+
+  const axiosWithAuth = getAxiosWithAuth();
+
+ 
+  const fetchPlantHistoryList =
+    (id: number) => async (dispatch: AppDispatch) => {
+      try {
+        dispatch(fetchStart());
+        const response = await axiosWithAuth.get(`planthistory/${id}`);
+        dispatch(fetchPlantHistories(response.data));
+        dispatch(fetchSuccess());
+        console.log("Historico ", response.data);
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+      }
+    };
+
+  const fetchPlantHistoryLast =
+    (id: number) => async (dispatch: AppDispatch) => {
+      try {
+        dispatch(fetchStart());
+        const response = await axiosWithAuth.get(`planthistory/top/${id}`);
+        dispatch(fetchPlantHistory(response.data));
+        dispatch(fetchSuccess());
+      
+        console.log("Historico ", response.data);
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+      }
+    };
+
+  return { fetchPlantHistoryList, fetchPlantHistoryLast };
+};

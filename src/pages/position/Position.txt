@@ -1,0 +1,230 @@
+
+import { useEffect, useState } from 'react';
+import { RootState } from '../../features';
+//import { usePointAction } from '../../features/point/usePointAction';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
+
+
+import { TableOfPositions } from './TableOfPositions';
+import { StatusOfPosition } from '../../constants/StatusOfPosition';
+
+// import Transformation from '../transformation/Transformation';
+import { usePointAction } from '../../features/point/usePointAction';
+import { useTransformationAction } from '../../features/transformation/useTransformationAction';
+//import { useOrganizationalAction } from '../../features/organization/useOrganizationalAction';
+// import { usePositionAction } from '../../features/position/usePositionAction';
+import { Select } from '../../components/ui/Select';
+import { Label } from '../../components/ui/Label';
+import { Input } from '../../components/ui/Input';
+import { format } from 'date-fns';
+import { useForm } from 'react-hook-form';
+import { addPosition } from '../../features/position/positionThunk';
+import { PositionRequest } from '../../models/position';
+import { fetchOrganizationalUnitDto } from '../../features/organization/organizationalThunk';
+
+
+
+
+export const Position = () => {
+
+  type FormValues = {
+    pointId: string;
+    organizationalId: string;
+    statusofPosition: string;
+  };
+
+  const initialValues: FormValues = {
+    pointId: '',
+    organizationalId: '',
+    statusofPosition: ''
+  };
+
+
+
+  const dispatch = useAppDispatch();
+
+  const [formValues, setFormValues] = useState<FormValues>(initialValues);
+  const [errors, setErrors] = useState<Partial<FormValues>>({});
+
+  const [countPoint, setCountPoint] = useState(0);
+  const [originPositionIds, setOriginPositionIds] = useState<number[]>([]);
+  const [shouldReset, setShouldReset] = useState(false);
+
+
+  const { points } = useAppSelector((state: RootState) => state.points);
+  const { transformations } = useAppSelector((state: RootState) => state.transformations);
+  const { organizationalsDto } = useAppSelector((state: RootState) => state.organizationals);
+
+
+
+  const { fetchPoints } = usePointAction();
+  const { fetchTransformations } = useTransformationAction();
+
+  const getSelectedPositions = (selectedPositions: number[]) => {
+    setOriginPositionIds(selectedPositions);
+
+  }
+
+  useEffect(() => {
+    dispatch(fetchPoints());
+    dispatch(fetchTransformations());
+    dispatch(fetchOrganizationalUnitDto()); // Pass an empty object or the required argument(s)
+    //dispatch(fetchTransformationLast());
+    // dispatch(fetchOrganizationalUnit());
+
+  }, []);
+
+  interface PositionFields {
+    pointId: number;
+    organizationalId: number;
+    statusofPosition: string;
+    resolutionTransformationId: number;
+
+  }
+
+  const { register, reset, handleSubmit } = useForm<PositionFields>();
+
+  /*  const validate = (values: FormValues): Partial<FormValues> => {
+      const newErrors: Partial<FormValues> = {};
+      Object.entries(values).forEach(([key, value]) => {
+        if (!value || value === 'Seleccionar') {
+          newErrors[key as keyof FormValues] = 'Este campo es obligatorio';
+        }
+      });
+      return newErrors;
+    }     */
+
+
+  const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = event.target;
+    setFormValues({
+      ...formValues,
+      [event.target.name]: value
+    });
+    setErrors({
+      ...errors,
+      [event.target.name]: ''
+    });
+
+
+    const pointSelect = points.find(point => Number(point.id) === Number(value)) || null;
+    setCountPoint((pointSelect) ? Number(pointSelect?.amountPoint) : 0);
+  }
+
+
+  const handleResetDone = () => {
+
+    setShouldReset(false);
+
+  }
+
+  const onSubmit = (data: PositionFields) => {
+
+
+
+    const positionRequest: PositionRequest = {
+      pointId: Number(data.pointId),
+      organizationalId: Number(data.organizationalId),
+      originPositionIds: originPositionIds,
+      positionStatus: data.statusofPosition as (typeof StatusOfPosition)["ACTIVO" | "VACANTE_DEFINITIVA" | "VACANTE_TRANSITORIA" | "SUPRIMIDO"],
+      resolutionTransformationId: Number(data.resolutionTransformationId)
+    };
+
+    console.log("CAMPOS DE FIELD POSITION ", positionRequest);
+
+    setShouldReset(true);
+
+    dispatch(addPosition(positionRequest));
+
+    reset(); // Reset the form after submission
+    setCountPoint(0); // Reset the count of points
+
+  }
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)} className='mx-auto max-w-2xl sm:mt-6 '>
+        <h5 className="p-2 mb-1 text-1xl font-bold  text-gray-400 dark:text-white border border-gray-200 bg-[#cddafd] rounded-t-lg">Información de cargo</h5>
+        <div className='grid grid-cols-2 gap-3'>
+          <div>
+            <Label htmlFor='transformationId'>Información de transformación</Label>
+            <Select {...register('resolutionTransformationId')}>
+              {transformations && transformations.map((transformation) => (
+                <option key={transformation.id} value={transformation.id}>{transformation.resolutionNumber} - {transformation.date ? format(transformation?.date, 'dd-MM-yyyy') : ''} </option>
+              ))
+
+              }
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor='pointId'>Tipo de Cargo</Label>
+            <Select {...register('pointId')} onChange={handleChangeSelect}
+            >
+              {points.map((point) => (
+                <option key={point.id} value={point.id}>
+                  {point.namePosition}
+                </option>
+              ))}
+            </Select>
+
+            {errors.pointId && <p style={{ color: "red" }}>{errors.pointId}</p>}
+
+          </div>
+
+          {/* Cantidad de Puntos */}
+          <div>
+            <Label htmlFor='amountPoint'>Cantidad de Puntos</Label>
+
+            <Input name='amountPoint'
+              value={countPoint}
+              disabled
+            />
+          </div>
+
+          {/* Estado del Cargo */}
+          <div>
+            <Label>Estado del Cargo</Label>
+            <Select
+              {...register('statusofPosition')}
+            >
+              <option value="">Seleccionar</option>
+              {Object.entries(StatusOfPosition).map(([key, positionState]) => (
+                <option key={key} value={key}>
+                  {positionState}
+                </option>
+              ))}
+            </Select>
+
+            {errors.statusofPosition && <p style={{ color: "red" }}>{errors.statusofPosition}</p>}
+          </div>
+
+          {/* Unidad Organizacional */}
+          <div>
+            <Label htmlFor='organizationalId'>Unidad Org.</Label>
+
+            <Select
+              {...register('organizationalId')}
+            >
+              <option value="">Seleccionar</option>
+              {organizationalsDto.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.nameUnit}
+                </option>
+              ))}
+            </Select>
+            {errors.organizationalId && <p style={{ color: "red" }}>{errors.organizationalId}</p>}
+          </div>
+        </div>
+
+        <TableOfPositions shouldReset={shouldReset} onResetDone={handleResetDone} getSelectedPositions={getSelectedPositions} />
+        <div className="mt-10 flex justify-center">
+          <button type='submit' className="block  rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus:outline-offset-2 focus:outline-indigo-600"> Guardar</button>
+        </div>
+      </form>
+
+
+    </div>
+  )
+}
+
+

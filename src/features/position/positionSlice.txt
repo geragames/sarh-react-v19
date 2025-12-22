@@ -1,0 +1,67 @@
+import { PositionDto, PositionWithId } from '../../models/position.d';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+
+ interface PositionState {
+   positions: PositionDto[];
+   position: PositionDto | null;
+   loading: boolean;
+   error: string | null;   
+}
+
+const initialStates: PositionState = {
+   positions: [],
+   position: null,
+   loading: false,
+   error: null
+
+}  
+
+// const initialState: PositionWithId[] = [];  
+
+const positionSlice = createSlice({
+    name: 'position',
+    initialState: initialStates,
+    reducers: {
+       fetchStart(state) {
+          state.loading = true;
+          state.error = null;
+       }, 
+
+       fetchSuccess(state, action: PayloadAction<PositionDto[]>){
+          state.positions = action.payload;
+          state.loading = false;
+       },
+
+
+       setPosition(state, action) {
+           state.position = action.payload
+       }, 
+
+       setPositions(state, action: PayloadAction<PositionDto[]>) {
+         state.positions = action.payload;
+       },
+
+       adddNewPosition(state, action: PayloadAction<PositionWithId>) {
+          const  { id, organizationalUnitID: { nameUnit }, pointsAvailable } = action.payload;
+          
+          const newPosition: PositionDto =  { 
+            id: id,
+            namePosition: '',
+            nameUnit: nameUnit,
+            positionStatus: 0,
+            pointsAvailable: pointsAvailable,
+            resolutionNumber: '',
+            discountedQuantity: 0
+         } ;
+         
+         
+         state.positions.push(newPosition);
+       }
+    }
+
+})
+
+
+export default positionSlice.reducer;
+export const { fetchStart, fetchSuccess, setPosition, setPositions , adddNewPosition  } = positionSlice.actions;

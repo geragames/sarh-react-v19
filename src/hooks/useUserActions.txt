@@ -1,0 +1,34 @@
+import { setUsername, 
+         setAccessToken,
+         setLogin,setLogout, 
+         setPassword,
+         setRoles } from "../features/user/authSlice";
+
+import { useAppDispatch } from "./store";
+
+export const useUserActions = () => {
+   const dispatch = useAppDispatch();
+
+    const usernameToUser = (username: string) => {
+        dispatch(setUsername(username));
+    };
+    const passwordToUser = (password: string) => {
+        dispatch(setPassword(password));
+    };
+    const loadRolesByUser = (roles: string[]) => {
+        dispatch(setRoles(roles));
+    };
+    const accessTokenByUser = (accessToken: string) => {
+        dispatch(setAccessToken(accessToken));
+    };
+
+    const setIsLogin = (isLogged: boolean) => {
+        dispatch(setLogin(isLogged));
+    };
+
+    const setIsLogout = (isLogged: boolean) => {
+        dispatch(setLogout(isLogged));
+    };
+
+    return { usernameToUser ,passwordToUser , loadRolesByUser, accessTokenByUser, setIsLogin, setIsLogout };
+}

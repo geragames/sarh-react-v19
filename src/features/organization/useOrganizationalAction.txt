@@ -1,0 +1,28 @@
+import { AppDispatch } from "..";
+import { getAxiosWithAuth } from "../../hooks/useAxiosWithAuth";
+import { fetchStart, setOrganizationals, fetchSuccess } from "./organizationalSlice";
+
+export const useOrganizationalAction = () => {
+
+
+    const axiosWithAuth = getAxiosWithAuth();
+
+    const fetchOrganizationalUnits = () => async (dispatch: AppDispatch) => {
+          try {
+            dispatch(fetchStart());
+            const res = await axiosWithAuth.get("organizational/all");
+            dispatch(setOrganizationals(res.data));
+            console.log("ORGANIZATIONALS ", res.data);
+            dispatch(fetchSuccess(res.data))  
+
+          } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message);
+            }
+            
+          }
+    }
+
+
+    return {  fetchOrganizationalUnits}
+}
