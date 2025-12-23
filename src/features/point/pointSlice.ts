@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PointWithId } from "../../models/point";
-import { createPoint, fetchPointById, fetchPoints, updatePoint, updatePointByPercentage } from "./pointThunk";
+import { createPoint, fetchPointById, fetchPoints,updatePointByPercentage } from "./pointThunk";
 // import { fetchStart, fetchSuccess } from "../position/positionSlice";
 
 interface PointState {

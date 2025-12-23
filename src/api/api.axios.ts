@@ -9,7 +9,8 @@ import {
 //import { logout, updateAccessToken, updateUserData } from "../features/user/authThunk";
 //import { reactRefresh } from "eslint-plugin-react-refresh";
 
-const BASE_URL = "http://localhost:8080/";
+//const BASE_URL = "http://localhost:8080/";
+const BASE_URL = import.meta.env.VITE_API_URL;
 let reduxStore: AppStore | null = null;
 
 export const setStore = (store: AppStore) => {
@@ -91,7 +92,7 @@ axiosWithAuth.interceptors.response.use(
 
       try {
         console.log("Intentando refrescar token...");
-        const resp = await axios.post(`${BASE_URL}auth/refresh`, {refreshToken: refreshToken });
+        const resp = await axios.post(`${BASE_URL}/auth/refresh`, {refreshToken: refreshToken });
         console.log("Respuesta refresh:", resp.data);
 
         const newAccessToken = resp.data?.accessToken || resp.data?.token;

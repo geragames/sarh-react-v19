@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 
 import { Input } from "../../components/ui/Input";
 import { Label } from "../../components/ui/Label";
-import { Table } from "../../components/ui/Table";
+
 import { Button } from "../../components/ui/Button";
 import { Select } from "../../components/ui/Select";
 import { PlantStatus } from "../../constants/PlantStatus";
@@ -19,6 +19,7 @@ import { fetchPlantsOfPositionById, updatePlantPosition } from "../../features/p
 import { PlantPositionRequest } from "../../models/plant-position";
 import { fetchPlantHistoryLast, fetchPlantHistoryList } from "../../features/planthistory/PlantHistoryThunk";
 import { DocumentType } from "../../constants/DocumentType";
+import { Spinner } from "../../components/ui/Spinner";
 
 
 
@@ -44,7 +45,7 @@ export const PlantPositionUpdate = () => {
   const { plant } = useAppSelector((state: RootState) => state.plants);
   
   
-  const { plantHistories, plantHistory } = useAppSelector((state: RootState) => state.planthistory);
+  const { plantHistories, plantHistory, loading } = useAppSelector((state: RootState) => state.planthistory);
 
   const { register, reset, handleSubmit } = useForm<PlantEditableFields>();
 
@@ -269,15 +270,59 @@ export const PlantPositionUpdate = () => {
 
         <div></div>
         <div className="p-2">
-          <Table
-            columns={[
-              { key: "plantStatus", header: "Estado Actual" },
-              { key: "dateFrom", header: "Fecha Desde" },
-              { key: "dateTo", header: "Fecha Hasta" },
-            ]}
-            data={plantHistories}
-            className="table-auto"
-          />
+           <table className="min-w-full divide-y divide-gray-200">
+                             <thead className="bg-[#d5d8d3]">
+                                 <tr>
+                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 capitalize tracking-wider">Estado Actual</th>
+                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 capitalize tracking-winder">Fecha Inicio</th>
+                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 capitalize tracking-wider">Fecha Cese</th>
+                                 </tr>
+                             </thead>
+         
+                             <tbody>
+                                 {loading ? (
+                                     <tr>
+                                         <td colSpan={6} className="items-center">
+                                             <Spinner></Spinner>
+                                         </td>
+                                     </tr>) : Array.isArray(plantHistories) && plantHistories.length > 0 ?
+                                     (plantHistories.map((plantHistory) => (
+                                         <tr key={plantHistory.id}>
+                                             <td className="px-6 py-2 whitespace-nowrap">
+                                                 <div className="flex items-center">
+                                                     <div className="ml-4">
+                                                         <div className="text-sm font-medium text-gray-500">
+                                                             {plantHistory.id}
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </td>
+                                             <td className="px-6 py-2 whitespace-nowrap">
+                                                 <div className="text-sm text-gray-500">
+                                                     {plantHistory.plantStatus}
+                                                 </div>
+         
+                                             </td>
+                                             <td className="px-6 py-3 whitespace-nowrap">
+                                                 <div className="text-sm text-gray-500">
+                                                     {plantHistory.dateFrom ?? 'N/A'}
+                                                 </div>
+                                             </td>
+                                             <td className="px-6 py-3 whitespace-nowrap">
+                                                 <div className="text-sm text-gray-500">
+                                                     {plantHistory.dateTo}
+                                                 </div>
+                                             </td>
+         
+         
+                                         </tr>
+                                     ))) :
+                                     (<></>)
+         
+                                 }
+                             </tbody>
+         
+                         </table>
         </div>
       </form>
     </div>

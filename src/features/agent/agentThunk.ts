@@ -7,14 +7,14 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 
 
-export const fetchAgents = createAsyncThunk(
+export const fetchAgents = createAsyncThunk<AgentWithId[], number, { rejectValue: string}>(
   "agent/all",
-  async (pageParam: number, { rejectWithValue }) => {
+  async (pageParam, { rejectWithValue }) => {
     try {
       const { data } = await axiosWithAuth.get<AgentWithId[]>("agent/all", { params: pageParam});
       return data;
     } catch (error) {
-      return rejectWithValue(error);
+      return rejectWithValue(String(error));
     }
   }
 );

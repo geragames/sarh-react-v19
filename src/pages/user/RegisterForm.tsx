@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { fetchUserById } from "../../features/user/userThunk";
 
-import { Role } from "../../models/roles";
+
 //import { UserRequest, UserWithId } from "../../models/user";
 
 
@@ -25,13 +25,6 @@ interface RegisterFormInputs {
   photo: FileList;
 }
 
-interface UpdateUserDTO {
-  id?: string;
-  username: string;
-  email: string;
-  roles: Role[];
-  
-} 
 
 export const RegisterForm = ({ mode }: { mode: "create" | "edit" }) => {
 
@@ -39,7 +32,7 @@ export const RegisterForm = ({ mode }: { mode: "create" | "edit" }) => {
 
   const { id } = useParams<{ id: string }>();
 
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<RegisterFormInputs>();
+  const { register, handleSubmit, setValue, reset } = useForm<RegisterFormInputs>();
 
   const { roles } = useAppSelector((state: RootState) => state.role);
   const { user } = useAppSelector((state: RootState) => state.users);
@@ -171,7 +164,7 @@ useEffect(() => {
         <Input {...register("username")} className="w-full" />
       </Label>
 
-      {mode === "create" && user && (
+      {mode === "create"  && (
         <>
           <Label>
             Contraseña:

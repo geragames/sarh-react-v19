@@ -20,7 +20,7 @@ export const ListOfAgents = () => {
    
     useEffect(() => {
 
-        dispatch(fetchAgents());
+        dispatch(fetchAgents(1));
     
     }, [dispatch]);
 

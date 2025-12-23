@@ -66,7 +66,7 @@ export const registerUser = createAsyncThunk("user/registerUser",
     async (formData: FormData, { rejectWithValue }) => {
         try {
 
-            const response = await axiosWithAuth.put("user/create", formData, {
+            const response = await axiosWithAuth.post("user/create", formData, {
                 headers: { 'Content-Type': "multipart/form-data" }
             });
             toast.success("El usuario se registro con exito");

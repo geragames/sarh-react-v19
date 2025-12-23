@@ -9,11 +9,13 @@ interface changePasswordPayload {
   newPassword: string;
 }
 
+const BASE_URL=import.meta.env.VITE_API_URL
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials: { username: string; password: string }, { dispatch }) => {
-    const response = await axios.post("http://localhost:8080/auth/log-in", credentials);
+//    const response = await axios.post("http://localhost:8080/auth/log-in", credentials);
+      const response = await axios.post(`${BASE_URL}/auth/log-in`, credentials);
 
     console.log("USUARIO LOGIN " + response.data.username);
 

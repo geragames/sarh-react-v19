@@ -1,7 +1,7 @@
 import { AppDispatch } from "..";
 import { getAxiosWithAuth } from "../../hooks/useAxiosWithAuth";
 import { Point } from "../../models/point";
-import { setPoint, setPoints } from "./pointSlice";
+
 
 
 export const usePointAction = () => {
