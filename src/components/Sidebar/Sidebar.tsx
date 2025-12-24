@@ -28,7 +28,7 @@ const Sidebar = () => {
 
     const location = useLocation();
 
-    const from = location.state?.from?.pathname || "/";
+    const from = location.state?.from?.pathname || "/login";
 
     const state = useAppSelector((state) => state);
 
