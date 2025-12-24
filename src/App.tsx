@@ -68,7 +68,10 @@ function App() {
           </Route>
         </Route>
         <Route element={<RequireAuth allowedRoles={[Roles.ROLE_DEVELOPER]} />}>
-          <Route path="puntos" element={<Point />} />
+          <Route element={<Layout />}>
+            <Route path="puntos" element={<Point />} />
+          </Route>
+
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[Roles.ROLE_ADMIN, Roles.ROLE_DEVELOPER]} />}>
