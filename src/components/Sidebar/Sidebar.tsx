@@ -51,7 +51,7 @@ const Sidebar = () => {
   const handleOutside = () => {
       console.log("CIERRE");
        dispatch(logout());
-       navigate(from, { replace: true});
+       navigate('/login', { replace: true});
   }
 
   {/* <div className='flex justify-center'>
