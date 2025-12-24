@@ -58,31 +58,33 @@ function App() {
 
 
 
-        
-          <Route element={<RequireAuth allowedRoles={[Roles.ROLE_ADMIN, Roles.ROLE_USER, Roles.ROLE_INVITED]} />}>
-            <Route element={<Layout/>} >
-            <Route index element={<Home />}/>
+
+        <Route element={<RequireAuth allowedRoles={[Roles.ROLE_ADMIN, Roles.ROLE_USER, Roles.ROLE_INVITED]} />}>
+          <Route element={<Layout />} >
+            <Route index element={<Home />} />
             <Route path="departamento" element={<TableOrganizationalUnit />} />
             <Route path="materias" element={<TableSubOrganizational />} />
             <Route path='change' element={<RestartPassword />} />
-            </Route>
           </Route>
-          <Route element={ <RequireAuth allowedRoles={[Roles.ROLE_DEVELOPER]} />}>
-              <Route path="puntos" element={<Point />} />
-          </Route>
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[Roles.ROLE_DEVELOPER]} />}>
+          <Route path="puntos" element={<Point />} />
+        </Route>
 
-          <Route element={<RequireAuth allowedRoles={[Roles.ROLE_ADMIN, Roles.ROLE_DEVELOPER]} />}>
-          
+        <Route element={<RequireAuth allowedRoles={[Roles.ROLE_ADMIN, Roles.ROLE_DEVELOPER]} />}>
+          <Route element={<Layout />}>
             <Route path='resetpassword' element={<ResetPassword />} />
             <Route path="usuarios" element={<ListOfUsers />} />
             <Route path="register/create" element={<RegisterForm mode='create' />} />
             <Route path="register/edit/:id" element={<RegisterForm mode='edit' />} />
+
           </Route>
-          <Route element={<RequireAuth allowedRoles={[Roles.ROLE_USER]} />}>
-            {/*   <Route path='cargos' element={<Position />} />  */}
-          
 
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[Roles.ROLE_USER]} />}>
+          {/*   <Route path='cargos' element={<Position />} />  */}
 
+          <Route element={<Layout />}>
             <Route path="agentes/all" element={<ListOfAgents2 />} />
             <Route path="agente/create" element={<Agent mode="create" />} />
             <Route path="agente/edit/:id" element={<Agent mode="edit" />} />
@@ -98,7 +100,7 @@ function App() {
             <Route path="cargo/edit/:id" element={<Position mode={"edit"} />} />
             <Route path="cargo/create" element={<Position mode={"create"} />} />
 
-           <Route
+            <Route
               path="departamento/edit/:id"
               element={<OrganizationalUnitFC mode={"edit"} />}
             />
@@ -120,6 +122,9 @@ function App() {
             <Route path="reporte-plantas" element={<PlantReport />} />
             <Route path="*" element={<PageNotFound />} />
           </Route>
+
+
+        </Route>
       </Routes>
       <ToastContainer position="top-right" autoClose={3000} />
     </>
@@ -127,3 +132,4 @@ function App() {
 }
 
 export default App
+
