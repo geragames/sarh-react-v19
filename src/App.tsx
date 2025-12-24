@@ -57,8 +57,9 @@ function App() {
 
 
 
-        <Route path="/" element={<Layout />}>
+        
           <Route element={<RequireAuth allowedRoles={[Roles.ROLE_ADMIN, Roles.ROLE_USER, Roles.ROLE_INVITED]} />}>
+            <Route path="/" element={<Layout />}>
             <Route path="departamento" element={<TableOrganizationalUnit />} />
             <Route path="materias" element={<TableSubOrganizational />} />
             <Route path='change' element={<RestartPassword />} />

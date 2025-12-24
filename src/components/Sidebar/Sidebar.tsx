@@ -86,7 +86,7 @@ const Sidebar = () => {
     >
       <FaSignOutAlt />
       Salir
-    </Button>
+    </Button>dx
   </div>
       </aside>
     </>
