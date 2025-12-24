@@ -16,15 +16,15 @@ export const RequireAuth = ({ allowedRoles }: { allowedRoles: string[] } ) => {
     if(loading){
         return <Spinner></Spinner>;
     }
+    if(isAuthenticated && (!roles || roles.length === 0)){
+        return <Spinner/>
+    }
 
     if(!isAuthenticated){ 
         return <Navigate to="/login"  state={{from: location}} replace/>      
     }
 
-    if(!roles || roles.length === 0){
-
-         return (<Navigate to="/login" state={{ from: location }} replace />);
-    }
+    
 
     const hasAccess = roles.some((role) => allowedRoles.includes(role));
 
