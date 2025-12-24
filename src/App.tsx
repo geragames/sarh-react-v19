@@ -40,6 +40,7 @@ import { ListOfTransformations } from './pages/transformation/ListOfTransformati
 import { ResetPassword } from './pages/reset-password/Reset-Password'
 import { RestartPassword } from './pages/Login/RestartPassword'
 import { RegisterForm } from './pages/user/RegisterForm'
+import { Home } from './components/Home'
 
 
 
@@ -59,7 +60,7 @@ function App() {
 
         
           <Route element={<RequireAuth allowedRoles={[Roles.ROLE_ADMIN, Roles.ROLE_USER, Roles.ROLE_INVITED]} />}>
-            <Route path="/" element={<Layout />}>
+            <Route path="/" element={<Home />}>
             <Route path="departamento" element={<TableOrganizationalUnit />} />
             <Route path="materias" element={<TableSubOrganizational />} />
             <Route path='change' element={<RestartPassword />} />
